@@ -1,9 +1,13 @@
 namespace ListProject;
 
-public interface IShoppingListService
+public interface IShoppingListDataSource
 {
-    ShoppingList GetShoppingList();
-    ShoppingList CreateShoppingList(string name);
-    void DeleteShoppingList(string id);
+    List<ShoppingList>? GetAllShoppingLists();
+    void CreateShoppingList(ShoppingList list);
+    void DeleteShoppingList(ShoppingList list);
+    void UpdateShoppingList(ShoppingList list);
+    ShoppingList SelectListToView(int choice);
+    void UpdateFile(List<ShoppingList> list);
     
+
 }

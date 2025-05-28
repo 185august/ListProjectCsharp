@@ -1,19 +1,94 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace ListProject;
 
-public class JsonShoppingListService : IShoppingListService
+public class JsonShoppingDataSource : IShoppingListDataSource
 {
-    public ShoppingList GetShoppingList()
+    private string _path;
+
+    private JsonSerializerOptions options = new()
     {
-        throw new NotImplementedException();
+        WriteIndented = true,
+    };
+
+    public JsonShoppingDataSource(string path)
+    {
+        _path = path;
     }
 
-    public ShoppingList CreateShoppingList(string name)
+    private void CheckAndCreateFile()
     {
-        
+        var directory = Path.GetDirectoryName(_path);
+        if (!Directory.Exists(directory))
+            Directory.CreateDirectory(directory);
+
+        if (!File.Exists(_path))
+            File.WriteAllText(_path, "[]");
     }
 
-    public void DeleteShoppingList(string id)
+    public List<ShoppingList>? GetAllShoppingLists()
     {
-        throw new NotImplementedException();
+        CheckAndCreateFile();
+        var json = File.ReadAllText(_path);
+        try
+        {
+            return string.IsNullOrEmpty(json) || json == "[]"
+                ? null
+                : JsonSerializer.Deserialize<List<ShoppingList>>(json);
+        }
+        catch (JsonException ex)
+        {
+            Console.WriteLine($"Error with JSON: {ex.Message}");
+            return new List<ShoppingList>();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+            return new List<ShoppingList>();
+        }
+    }
+
+    public void CreateShoppingList(ShoppingList list)
+    {
+        CheckAndCreateFile();
+        var existingLists = GetAllShoppingLists() ?? new List<ShoppingList>();
+        existingLists.Add(list);
+        File.WriteAllText(_path, JsonSerializer.Serialize(existingLists, options));
+    }
+
+    public void DeleteShoppingList(ShoppingList list)
+    {
+        var shoppingLists = GetAllShoppingLists();
+        if (shoppingLists != null)
+        {
+            shoppingLists.Remove(list);
+            UpdateFile(shoppingLists);
+        }
+    }
+
+    public void UpdateShoppingList(ShoppingList list)
+    {
+        var shoppingLists = GetAllShoppingLists();
+        if (shoppingLists == null)
+            return;
+        foreach (var shoppingList in shoppingLists)
+        {
+            if (shoppingList.Id == list.Id)
+            {
+                shoppingList.Items = list.Items;
+                UpdateFile(shoppingLists);
+            }
+        }
+    }
+
+    public void UpdateFile(List<ShoppingList> list)
+    {
+        File.WriteAllText(_path, JsonSerializer.Serialize(list, options));
+    }
+
+    public ShoppingList SelectListToView(int choice)
+    {
+        return GetAllShoppingLists()?[choice - 1] ?? new ShoppingList("");
     }
 }
