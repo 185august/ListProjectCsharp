@@ -1,3 +1,5 @@
+using static System.Int32;
+
 namespace ListProject;
 
 public static class ValidationHelper
@@ -12,22 +14,21 @@ public static class ValidationHelper
                 Console.WriteLine($"You only have one option: {min}\n" +
                                   $"Do you want to continue? (y/n)");
                 var choice = ValidateYesOrNo();
-                if(choice == "y")
-                    return min;
-                else
-                    return 0;
-                
-            }
-            Console.WriteLine($"Please enter a number between {min} and {max}");
-            int.TryParse(Console.ReadLine(), out var input);
-            if (input >= min && input <= max)
-            {
-                result = input;
-                break;
+                return choice == "y" ? min : 0;
             }
 
+            Console.WriteLine($"Please enter a number between {min} and {max}");
+            if (TryParse(Console.ReadLine(), out var input))
+            {
+                if (input >= min && input <= max)
+                {
+                    result = input;
+                    break;
+                }
+            }
             Console.WriteLine("Invalid input");
         } while (true);
+
         Console.Clear();
         return result;
     }
@@ -38,12 +39,14 @@ public static class ValidationHelper
         do
         {
             Console.WriteLine("Please enter a number");
-            int.TryParse(Console.ReadLine(), out input);
+            if (TryParse(Console.ReadLine(), out input))
+                break;
         } while (input < 0);
+
         Console.Clear();
         return input;
     }
-    
+
     public static string ValidateTextInput()
     {
         do
@@ -69,8 +72,8 @@ public static class ValidationHelper
             Console.WriteLine("Please enter Y or N");
             input = Console.ReadLine()?.ToUpper();
         } while (input != "Y" && input != "N");
+
         Console.Clear();
         return input;
     }
-    
 }
