@@ -17,7 +17,7 @@ public class JsonShoppingDataSource : IShoppingListDataSource
         _path = path;
     }
 
-    public void UpdateFile(List<ShoppingList> list)
+    private void UpdateFile(List<ShoppingList> list)
     {
         File.WriteAllText(_path, JsonSerializer.Serialize(list, options));
     }
@@ -55,11 +55,9 @@ public class JsonShoppingDataSource : IShoppingListDataSource
 
     public void CreateShoppingList(ShoppingList list)
     {
-        Console.WriteLine($"Using existing id for shopping list: {list.Id}");
         CheckAndCreateFile();
-        var existingLists = GetAllShoppingLists() ?? new List<ShoppingList>();
+        var existingLists = GetAllShoppingLists() ?? [];
         existingLists.Add(list);
-        // File.WriteAllText(_path, JsonSerializer.Serialize(existingLists, options));
         UpdateFile(existingLists);
     }
 
@@ -67,9 +65,10 @@ public class JsonShoppingDataSource : IShoppingListDataSource
     {
         var shoppingLists = GetAllShoppingLists();
         if (shoppingLists == null) return;
-        shoppingLists.Remove(list);
+        var listToRemove = shoppingLists.Find(l => l.Id == list.Id);
+        if (listToRemove != null)
+            shoppingLists.Remove(listToRemove);
         UpdateFile(shoppingLists);
-        //File.WriteAllText(_path, JsonSerializer.Serialize(shoppingLists, options));
     }
 
     public void UpdateShoppingList(ShoppingList list)
@@ -77,23 +76,20 @@ public class JsonShoppingDataSource : IShoppingListDataSource
         var shoppingLists = GetAllShoppingLists();
         if (shoppingLists == null)
             return;
-        foreach (var shoppingList in shoppingLists)
-            if (shoppingList.Id == list.Id)
-            {
-                Console.WriteLine($"Updating list with id {list.Id}");
-                shoppingList.Items = list.Items;
-            }
-            else
-            {
-                Console.WriteLine($"Skipping list with id {shoppingList.Id}");
-            }
+        // foreach (var shoppingList in shoppingLists)
+        //     if (shoppingList.Id == list.Id)
+        //     {
+        //         shoppingList.Items = list.Items;
+        //     }
+        var listToUpdate = shoppingLists.Find(l => l.Id == list.Id);
+        if (listToUpdate != null)
+        listToUpdate.Items = list.Items;
         UpdateFile(shoppingLists);
-        //File.WriteAllText(_path, JsonSerializer.Serialize(shoppingLists, options));
     }
     
 
     public ShoppingList SelectListToView(int choice)
     {
-        return GetAllShoppingLists()?[choice - 1] ?? new ShoppingList("");
+        return (GetAllShoppingLists()?[choice - 1] ?? null) ?? throw new InvalidOperationException();
     }
 }

@@ -7,7 +7,6 @@ public interface IShoppingListDataSource
     void DeleteShoppingList(ShoppingList list);
     void UpdateShoppingList(ShoppingList list);
     ShoppingList SelectListToView(int choice);
-    void UpdateFile(List<ShoppingList> list);
     
 
 }

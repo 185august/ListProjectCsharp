@@ -1,10 +1,10 @@
 namespace ListProject;
 
-public class ShoppingListService
+public class ShoppingListOverviewService
 {
     public IShoppingListDataSource DataSource;
 
-    public ShoppingListService(IShoppingListDataSource dataSource)
+    public ShoppingListOverviewService(IShoppingListDataSource dataSource)
     {
         DataSource = dataSource;
     }
@@ -20,17 +20,5 @@ public class ShoppingListService
 
     public ShoppingList SelectShoppingList(int choice) => 
         DataSource.SelectListToView(choice);
-
-    public void AddItem(ShoppingList list, ListItem item)
-    {
-        list.Items.Add(item);
-        DataSource.UpdateShoppingList(list);
-    }
-    public void RemoveItem(ShoppingList list, ListItem item)
-    {
-        list.Items.Remove(item);
-        DataSource.UpdateShoppingList(list);
-    }
-    
     
 }

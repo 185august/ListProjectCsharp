@@ -27,8 +27,8 @@ public class ShoppingList
         Items = items;
     }
 
-    public override bool Equals(object obj)
+    public override string ToString()
     {
-        return obj is ShoppingList list && Id == list.Id;
+        return $"Name of the list: {Name}";
     }
 }

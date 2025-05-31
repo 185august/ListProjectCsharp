@@ -11,13 +11,12 @@ public static class ValidationHelper
         {
             if (min == max)
             {
-                Console.WriteLine($"You only have one option: {min}\n" +
-                                  $"Do you want to continue? (y/n)");
-                var choice = ValidateYesOrNo();
-                return choice == "y" ? min : 0;
+                Console.WriteLine("You only have one option \nPlease enter 1");
             }
-
-            Console.WriteLine($"Please enter a number between {min} and {max}");
+            else
+            {
+                Console.WriteLine($"Please enter a number between {min} and {max}");
+            }
             if (TryParse(Console.ReadLine(), out var input))
             {
                 if (input >= min && input <= max)
@@ -28,10 +27,11 @@ public static class ValidationHelper
             }
             Console.WriteLine("Invalid input");
         } while (true);
-
+        
         Console.Clear();
         return result;
     }
+
 
     public static int ValidateNumberInput()
     {
@@ -64,7 +64,7 @@ public static class ValidationHelper
         } while (true);
     }
 
-    public static string ValidateYesOrNo()
+    public static bool ValidateYesOrNo()
     {
         string? input;
         do
@@ -74,6 +74,6 @@ public static class ValidationHelper
         } while (input != "Y" && input != "N");
 
         Console.Clear();
-        return input;
+        return input == "Y";
     }
 }
