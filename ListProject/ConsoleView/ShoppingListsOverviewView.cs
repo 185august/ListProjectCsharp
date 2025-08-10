@@ -28,7 +28,7 @@ public class ShoppingListsOverviewView
                 case 2:
                     var newList =controller.CreateNewShoppingList();
                     _individualListsView.ViewIndivudalList(newList);
-                    break;
+                    break;  
                 case 3:
                     ViewShoppingLists();
                     controller.RemoveList();
